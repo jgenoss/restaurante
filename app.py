@@ -1,5 +1,6 @@
 from flask import Flask,session,redirect,url_for,flash,render_template,request
 from flask_socketio import SocketIO,emit
+from modals import Models
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -18,7 +19,11 @@ def menu():
 
 @app.route("/mesas")
 def mesas():
-   return render_template("mesas.html")
+   return render_template("mesas.html",tables=Models.get_mesas())
+
+@app.route('/mesa/<id>')
+def mesa(id):
+   return "<h1>{0}</h1>".format(id)
 
 @app.route("/pedidos")
 def pedidos():
@@ -28,6 +33,13 @@ def pedidos():
 def handle_message(data):
     print('received message: ' + str(data))
 
+@socketio.on('connect')
+def handle_connect():
+    print('Cliente conectado')
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Cliente desconectado')
 
 #run app
 if __name__ == "__main__":

@@ -1,4 +1,36 @@
 {% extends 'base.html' %}
 {% block base %}
-
+<div class="content-header">
+   <div class="container-fluid">
+     <div class="row mb-2">
+       <div class="col-sm-6">
+         <h1 class="m-0">Gestion de Bodega</h1>
+       </div><!-- /.col -->
+       <div class="col-sm-6">
+         <ol class="breadcrumb float-sm-right">
+           <li class="breadcrumb-item"><a href="">Gestion de Bodega</a></li>
+           <li class="breadcrumb-item active">AdminCP</li>
+         </ol>
+       </div><!-- /.col -->
+     </div><!-- /.row -->
+   </div><!-- /.container-fluid -->
+</div>
+<div class="content">
+   <div class="row">
+{% for table in tables %}
+      <div class="col-lg-3 col-6">
+         <div class="small-box bg-info">
+            <div class="inner">
+               <h3>{{table.name}}</h3>
+               <p>New Orders</p>
+            </div>
+            <div class="icon">
+               <i class="ion ion-bag"></i>
+            </div>
+            <a href="{{url_for('mesa',id=table.id)}}" class="small-box-footer">Mas informacion <i class="fas fa-arrow-circle-right"></i></a>
+         </div>
+      </div>
+{% endfor %}
+   </div>
+</div>
 {% endblock base %}
