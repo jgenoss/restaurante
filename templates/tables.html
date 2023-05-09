@@ -47,6 +47,7 @@
                </button>
              </div>
              <div id="#tables" class="modal-body">
+               
                <table class="table table-responsive p-1 table-bordered table-hover">
                   <thead>
                     <tr class="text-center">
@@ -66,8 +67,8 @@
                         <td></td>
                         <td>{ item.quantity }</td>
                         <td >
-                           <span v-if="item.status == 'pending'" class="right badge badge-danger">{ item.status }</span>
-                           <span v-else class="right badge badge-success">{ item.status }</span>
+                           <span v-if="item.status == 'pending'" class="badge badge-danger">{ item.status }</span>
+                           <span v-else class="badge badge-success">{ item.status }</span>
                         </td>
                      </tr>
                   </tbody>
