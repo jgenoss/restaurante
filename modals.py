@@ -8,13 +8,13 @@ class Models:
     @classmethod
     def get_id(self,id):
         db = Database()
-        result = db.fetch_one("select * from mesas where id='%s'",(id,))
+        result = db.fetch_one("select * from tables where id='%s'",(id,))
         return {"id":result[0],"name":result[1]}
     
     @classmethod
-    def get_mesas(self):
+    def get_tables(self):
         db = Database()
-        results = db.fetch_all("select * from mesas")
+        results = db.fetch_all("select * from tables")
         data = list()
         for i in results:
             data.append({
@@ -36,7 +36,7 @@ class Models:
                 o.status 
             FROM
                 orders AS o
-                INNER JOIN mesas AS t ON o.table_id = t.id
+                INNER JOIN tables AS t ON o.table_id = t.id
                 INNER JOIN menu AS m ON o.menu_id = m.id 
             WHERE
                 t.id %s """,(id,))

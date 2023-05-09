@@ -17,12 +17,12 @@ def index():
 def menu():
    return render_template("menu.html")
 
-@app.route("/plates")
-def plates():
-   return render_template("plates.html",tables=Models.get_mesas())
+@app.route("/tables")
+def tables():
+   return render_template("tables.html",tables=Models.get_tables())
 
-@app.route('/plastes_ordes/<int:id>')
-def plate_orders(id):
+@app.route('/table_orders/<int:id>')
+def table_orders(id):
    return "<h1>{0}</h1>".format(id)
 
 @app.route("/orders")
