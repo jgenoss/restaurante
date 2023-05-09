@@ -1,9 +1,27 @@
 {% extends 'base.html' %}
 {% block base %}
-
-<div class="content">
+<div class="content-header">
+   <div class="container-fluid">
+      <div class="row mb-2">
+         <div class="col-sm-6">
+            <h1 class="m-0">Gestion de Mesas</h1>
+         </div>
+         <!-- /.col -->
+         <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+               <li class="breadcrumb-item"><a href="">Gestion de Mesas</a></li>
+               <li class="breadcrumb-item active">Mesas</li>
+            </ol>
+         </div>
+         <!-- /.col -->
+      </div>
+      <!-- /.row -->
+   </div>
+   <!-- /.container-fluid -->
+</div>
+<div id="tables" class="content">
    <div class="row">
-{% for table in tables %}
+      {% for table in tables %}
       <div class="col-lg-3 col-6">
          <div class="small-box bg-info">
             <div class="inner">
@@ -13,10 +31,78 @@
             <div class="icon">
                <i class="ion ion-bag"></i>
             </div>
-            <a href="{{url_for('table_orders',id=table.id)}}" class="small-box-footer">Mas informacion <i class="fas fa-arrow-circle-right"></i></a>
+            <a v-on:click.prevent @click="btnNewTable('{{url_for('table_orders',id=table.id)}}')" href="#" data-toggle="modal" data-target="#modal-{{table.id}}" class="small-box-footer">
+               Mas informacion
+               <i class="fas fa-arrow-circle-right"></i>
+            </a>
          </div>
       </div>
-{% endfor %}
+      <div class="modal fade" id="modal-{{table.id}}">
+         <div class="modal-dialog">
+           <div class="modal-content">
+             <div class="modal-header">
+               <h4 class="modal-title">Pedidos {{table.name}}</h4>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+               </button>
+             </div>
+             <div id="#tables" class="modal-body">
+               <table class="table table-responsive p-1 table-bordered table-hover">
+                  <thead>
+                    <tr class="text-center">
+                       <th>#</th>
+                       <th>name</th>
+                       <th>description</th>
+                       <th>note</th>
+                       <th>quantity</th>
+                       <th>status</th>
+                  </tr>
+                  </thead>
+                  <tbody class="text-center">
+                     <tr v-for="item in items" :key="item.id">
+                        <td>{ item.id }</td>
+                        <td>{ item.name }</td>
+                        <td>{ item.description }</td>
+                        <td></td>
+                        <td>{ item.quantity }</td>
+                        <td >
+                           <span v-if="item.status == 'pending'" class="right badge badge-danger">{ item.status }</span>
+                           <span v-else class="right badge badge-success">{ item.status }</span>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+             </div>
+             <div class="modal-footer justify-content-between">
+               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary">Save changes</button>
+             </div>
+           </div>
+           <!-- /.modal-content -->
+         </div>
+         <!-- /.modal-dialog -->
+       </div>
+      {% endfor %}
    </div>
 </div>
 {% endblock base %}
+{% block js %}
+<script>
+   new Vue({
+      el:'#tables',
+      delimiters: ['{', '}'],
+      data(){
+         return{
+            items:[],
+         }
+      },
+      methods:{
+         btnNewTable:function(url){
+            axios.get(url).then(resp =>{
+               this.items = resp.data
+            })
+         }
+      }
+   })
+</script>
+{% endblock js %}

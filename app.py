@@ -1,4 +1,4 @@
-from flask import Flask,session,redirect,url_for,flash,render_template,request
+from flask import Flask,session,redirect,url_for,flash,render_template,request,jsonify,json
 from flask_socketio import SocketIO,emit
 from modals import Models
 
@@ -23,7 +23,7 @@ def tables():
 
 @app.route('/table_orders/<int:id>')
 def table_orders(id):
-   return "<h1>{0}</h1>".format(id)
+   return Models.OPM(id)
 
 @app.route("/orders")
 def orders():

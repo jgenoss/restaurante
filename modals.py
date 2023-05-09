@@ -39,7 +39,7 @@ class Models:
                 INNER JOIN tables AS t ON o.table_id = t.id
                 INNER JOIN menu AS m ON o.menu_id = m.id 
             WHERE
-                t.id %s """,(id,))
+                t.id = %s """,(id,))
         data = list()
         for i in results:
             data.append({

@@ -124,6 +124,8 @@
    <script src="{{url_for('static',filename='plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
    <script src="{{url_for('static',filename='plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
    <script src="{{url_for('static',filename='plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+   <script src="{{url_for('static',filename='plugins/vue/vue.js')}}"></script>
+   <script src="{{url_for('static',filename='plugins/axios/axios.min.js')}}"></script>
    <script src="{{url_for('static',filename='plugins/socket.io.js')}}"></script>
    <script>
       var socketio = io();
@@ -131,4 +133,5 @@
          socketio.emit('message','conectado');
       })
    </script>
+   {% block js %}{% endblock js %}
 </html>
