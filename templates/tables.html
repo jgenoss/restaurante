@@ -23,17 +23,17 @@
    <div class="row">
       {% for table in tables %}
       <div class="col-lg-3 col-6">
-         <div class="small-box bg-info">
+         <div class="small-box bg-success">
             <div class="inner">
                <h3>{{table.name}}</h3>
                <p>New Orders</p>
             </div>
             <div class="icon">
-               <i class="ion ion-bag"></i>
+               <i class="fa fa-table"></i>
             </div>
             <a v-on:click.prevent @click="btnNewTable('{{url_for('table_orders',id=table.id)}}')" href="#" data-toggle="modal" data-target="#modal-{{table.id}}" class="small-box-footer">
                Mas informacion
-               <i class="fas fa-arrow-circle-right"></i>
+               <i class="fa fa-circle-plus"></i>
             </a>
          </div>
       </div>
@@ -46,9 +46,18 @@
                  <span aria-hidden="true">&times;</span>
                </button>
              </div>
-             <div id="#tables" class="modal-body">
-               
-               <table class="table table-responsive p-1 table-bordered table-hover">
+             <div class="modal-body">
+               <div class="mb-1">
+                  <button id="btnNewOrder" class="float-left btn btn-info">
+                     Nuevo pedido
+                     <i class="nav-icon fas fa-plus"></i>
+                  </button>
+                  <button style="display:none" id="btnReturn" class="float-right btn btn-info">
+                     Volver
+                     <i class="nav-icon fas fa-undo"></i>
+                  </button>
+               </div>
+               <table id="table_orders" class="table table-responsive p-1 table-bordered table-hover">
                   <thead>
                     <tr class="text-center">
                        <th>#</th>
@@ -97,11 +106,27 @@
             items:[],
          }
       },
+      created(){
+         this.initJquery();
+      },
       methods:{
          btnNewTable:function(url){
+            this.items = []
             axios.get(url).then(resp =>{
-               this.items = resp.data
-            })
+               this.items = resp.data;
+            });
+         },
+         initJquery:function(){
+            $(document).on("click","#btnNewOrder",function(e){
+               $("#btnNewOrder").slideUp();
+               $("#table_orders").slideUp();
+               $("#btnReturn").show();
+            });
+            $(document).on("click","#btnReturn",function(e){
+               $("#btnNewOrder").slideDown();
+               $("#table_orders").slideDown();
+               $("#btnReturn").hide();
+            });
          }
       }
    })
