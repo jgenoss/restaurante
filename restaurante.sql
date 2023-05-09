@@ -11,7 +11,7 @@
  Target Server Version : 100427
  File Encoding         : 65001
 
- Date: 08/05/2023 16:04:56
+ Date: 09/05/2023 10:53:32
 */
 
 SET NAMES utf8mb4;
@@ -38,24 +38,6 @@ INSERT INTO `menu` VALUES (3, 'Ensalada', 'Lechuga, tomate, pepino y aderezo', 8
 INSERT INTO `menu` VALUES (4, 'Refresco', 'Coca Cola, Sprite, Fanta', 3.00);
 
 -- ----------------------------
--- Table structure for mesas
--- ----------------------------
-DROP TABLE IF EXISTS `mesas`;
-CREATE TABLE `mesas`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of mesas
--- ----------------------------
-INSERT INTO `mesas` VALUES (1, 'Mesa 1');
-INSERT INTO `mesas` VALUES (2, 'Mesa 2');
-INSERT INTO `mesas` VALUES (3, 'Mesa 3');
-INSERT INTO `mesas` VALUES (4, 'Mesa 4');
-
--- ----------------------------
 -- Table structure for orders
 -- ----------------------------
 DROP TABLE IF EXISTS `orders`;
@@ -68,7 +50,7 @@ CREATE TABLE `orders`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `table_id`(`table_id`) USING BTREE,
   INDEX `menu_id`(`menu_id`) USING BTREE,
-  CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`table_id`) REFERENCES `mesas` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -81,5 +63,23 @@ INSERT INTO `orders` VALUES (15, 2, 3, 3, 'completed');
 INSERT INTO `orders` VALUES (16, 3, 2, 2, 'completed');
 INSERT INTO `orders` VALUES (17, 4, 1, 1, 'pending');
 INSERT INTO `orders` VALUES (18, 4, 4, 4, 'pending');
+
+-- ----------------------------
+-- Table structure for tables
+-- ----------------------------
+DROP TABLE IF EXISTS `tables`;
+CREATE TABLE `tables`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of tables
+-- ----------------------------
+INSERT INTO `tables` VALUES (1, 'Mesa 1');
+INSERT INTO `tables` VALUES (2, 'Mesa 2');
+INSERT INTO `tables` VALUES (3, 'Mesa 3');
+INSERT INTO `tables` VALUES (4, 'Mesa 4');
 
 SET FOREIGN_KEY_CHECKS = 1;
