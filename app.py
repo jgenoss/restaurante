@@ -23,7 +23,7 @@ def tables():
 
 @app.route('/table_orders/<int:id>')
 def table_orders(id):
-   return Models.OPM(id)
+   return Models.get_table_orders_id(id)
 
 @app.route("/orders")
 def orders():

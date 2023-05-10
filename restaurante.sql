@@ -11,7 +11,7 @@
  Target Server Version : 100427
  File Encoding         : 65001
 
- Date: 09/05/2023 10:53:32
+ Date: 09/05/2023 23:19:11
 */
 
 SET NAMES utf8mb4;
@@ -22,7 +22,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `menu`;
 CREATE TABLE `menu`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `price` decimal(8, 2) NOT NULL,
@@ -42,10 +42,10 @@ INSERT INTO `menu` VALUES (4, 'Refresco', 'Coca Cola, Sprite, Fanta', 3.00);
 -- ----------------------------
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `table_id` int NOT NULL,
-  `menu_id` int NOT NULL,
-  `quantity` int NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `table_id` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
   `status` enum('pending','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'pending',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `table_id`(`table_id`) USING BTREE,
@@ -69,17 +69,19 @@ INSERT INTO `orders` VALUES (18, 4, 4, 4, 'pending');
 -- ----------------------------
 DROP TABLE IF EXISTS `tables`;
 CREATE TABLE `tables`  (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `status` enum('close','open') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `persons` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tables
 -- ----------------------------
-INSERT INTO `tables` VALUES (1, 'Mesa 1');
-INSERT INTO `tables` VALUES (2, 'Mesa 2');
-INSERT INTO `tables` VALUES (3, 'Mesa 3');
-INSERT INTO `tables` VALUES (4, 'Mesa 4');
+INSERT INTO `tables` VALUES (1, 'Mesa 1', 'close', 0);
+INSERT INTO `tables` VALUES (2, 'Mesa 2', 'close', 0);
+INSERT INTO `tables` VALUES (3, 'Mesa 3', 'close', 0);
+INSERT INTO `tables` VALUES (4, 'Mesa 4', 'close', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;
