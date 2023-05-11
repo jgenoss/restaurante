@@ -1,6 +1,7 @@
 from flask import Flask,session,redirect,url_for,flash,render_template,request,jsonify,json
 from flask_socketio import SocketIO,emit
 from modals import Models
+from pprint import pprint
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -19,11 +20,38 @@ def menu():
 
 @app.route("/tables")
 def tables():
-   return render_template("tables.html",tables=Models.get_tables())
+   return render_template("tables.html", tables=Models.get_tables())
 
-@app.route('/table_orders/<int:id>')
-def table_orders(id):
-   return Models.get_table_orders_id(id)
+@app.route("/tables/get_tables", methods=['GET','POST'])
+def get_tables():
+   if request.method == 'POST':
+      return Models.get_tables()
+   else:
+      return redirect(url_for('tables'))
+   
+@app.route("/tables/open_table", methods=['GET','POST'])
+def open_table():
+   if request.method == 'POST':
+      parseJson = request.json
+      response = Models.open_table_id(parseJson['table_id'],parseJson['waiter'],parseJson['comment'],parseJson['status'])
+      if response == None:
+         return json.dumps({"message":"error"},default=str)
+      else:
+         return json.dumps({"message":"success"},default=str)
+   else:
+      return redirect(url_for('tables'))
+
+@app.route('/tables/get_open_table_id', methods=['GET','POST'])
+def get_open_table_id():
+   if request.method == 'POST':
+      parseJson = request.json
+      response = Models.get_table_open_id(parseJson['id'])
+      if response == None:
+         return json.dumps({"message":"error"},default=str)
+      else:
+         return json.dumps(response,default=str)
+   else:
+      return redirect(url_for('tables'))
 
 @app.route("/orders")
 def orders():
