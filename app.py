@@ -1,5 +1,5 @@
 from flask import Flask,session,redirect,url_for,flash,render_template,request,jsonify,json
-from flask_socketio import SocketIO,emit
+from flask_socketio import SocketIO
 from modals import Models
 from pprint import pprint
 
@@ -18,17 +18,28 @@ def index():
 def menu():
    return render_template("menu.html")
 
+#vista de mesas
 @app.route("/tables")
 def tables():
-   return render_template("tables.html", tables=Models.get_tables())
+   return render_template("tables.html")
 
+#consultar mesas
 @app.route("/tables/get_tables", methods=['GET','POST'])
 def get_tables():
    if request.method == 'POST':
       return Models.get_tables()
    else:
       return redirect(url_for('tables'))
+
+@app.route("/tables/getOrdersTableData", methods=['GET','POST'])
+def getOrdersTableData():
+   if request.method == 'POST':
+      parseJson = request.json
+      return Models.getOrdersTableData(parseJson['id'])
+   else:
+      return redirect(url_for('tables'))
    
+#abrir mesa 
 @app.route("/tables/open_table", methods=['GET','POST'])
 def open_table():
    if request.method == 'POST':
@@ -37,21 +48,11 @@ def open_table():
       if response == None:
          return json.dumps({"message":"error"},default=str)
       else:
+         socketio.emit("message",{"data":"update"})
          return json.dumps({"message":"success"},default=str)
    else:
       return redirect(url_for('tables'))
 
-@app.route('/tables/get_open_table_id', methods=['GET','POST'])
-def get_open_table_id():
-   if request.method == 'POST':
-      parseJson = request.json
-      response = Models.get_table_open_id(parseJson['id'])
-      if response == None:
-         return json.dumps({"message":"error"},default=str)
-      else:
-         return json.dumps(response,default=str)
-   else:
-      return redirect(url_for('tables'))
 
 @app.route("/orders")
 def orders():
@@ -59,6 +60,10 @@ def orders():
 
 @socketio.on('message')
 def handle_message(data):
+   print('received message: ' + str(data))
+   
+@socketio.on("open_table")
+def handle_open_table(data):
    print('received message: ' + str(data))
 
 #@socketio.on('connect')

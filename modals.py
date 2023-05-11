@@ -17,14 +17,32 @@ class Models:
         data = list()
         db = Database()
         results = db.fetch_all("select * from tables")
-        
         for i in results:
-            data.append({
-                "table_id":i[0],
-                "name":i[1],
-                "status":i[2]
-            })
+            result = self.get_table_open_id(i[0])
+            if i[2] == "open" and result:
+                data.append({
+                    "table_id":i[0],
+                    "name":i[1],
+                    "reservation_id":result['reservation_id'],
+                    "comment":result['comment'],
+                    "reservation_date":result['reservation_date'],
+                    "start_time":result['start_time'],
+                    "status":i[2]
+                })
+            else:
+                data.append({
+                    "table_id":i[0],
+                    "name":i[1],
+                    "reservation_id":"0",
+                    "comment":"N/A",
+                    "reservation_date":"N/A",
+                    "start_time":"N/A",
+                    "status":i[2]
+                })
         return json.dumps(data,default=str)
+            
+                
+        return 
     
     @classmethod
     def get_table_open_id(self,table_id):
@@ -70,18 +88,17 @@ class Models:
     def get_tables_id(self,id):
         db = Database()
         return db.fetch_all("SELECT o.id,m.name,m.description,o.quantity,m.price,o.status from orders AS o INNER JOIN tables AS t ON o.table_id = t.id INNER JOIN menu AS m ON o.menu_id = m.id WHERE t.id = %s ",(id,))
-    
+        
     @classmethod
-    def get_table_orders_id(self,id):
-        data = list()
+    def getOrdersTableData(self,id):
         result = self.get_table_id(id)
-        data.append({
+        data = {
             "id":result[0],
             "name":result[1],
             "orders":[]
-        })
+        }
         for i in self.get_tables_id(id):
-            data[0]["orders"] += [{
+            data["orders"] += [{
                 "id":i[0],
                 "name":i[1],
                 "description":i[2],
@@ -89,9 +106,7 @@ class Models:
                 "price":i[4],
                 "status":i[5]
             }]
-        return data
-    
-pprint(Models.get_date())
+        return json.dumps(data,default=str)
 
 
     

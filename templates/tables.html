@@ -22,7 +22,8 @@
             <div v-if="i.status == 'close'" class="small-box bg-danger">
                <div class="inner">
                   <h3>Mesa [[i.table_id]]</h3>
-                  comment
+                  <h5>Hora: [[i.start_time]]</h5>
+                  <p>Note: [[i.comment]]</p>
                </div>
                <div class="icon">
                   <i class="fa fa-table"></i>
@@ -35,7 +36,8 @@
             <div v-else class="small-box bg-success">
                <div class="inner">
                   <h3>Mesa [[i.table_id]]</h3>
-                  comment
+                  <h5>Hora: [[i.start_time]]</h5>
+                  <p>Note: [[i.comment]]</p>
                </div>
                <div class="icon">
                   <i class="fa fa-table"></i>
@@ -88,7 +90,7 @@
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header bg-success">
-               <h4 class="modal-title">Pedidos { table_id }</h4>
+               <h4 class="modal-title">Pedidos [[table.name]]</h4>
                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                <span aria-hidden="true">&times;</span>
                </button>
@@ -114,19 +116,17 @@
                      </tr>
                   </thead>
                   <tbody class="text-center">
-                     <!-- MODULO MESA CERRADA 
                         <tr v-for="item in table.orders" :key="item.id">
-                           <td>{ item.id }</td>
-                           <td>{ item.name }</td>
-                           <td>{ item.description }</td>
+                           <td>[[item.id]]</td>
+                           <td>[[item.name]]</td>
+                           <td>[[item.description]]</td>
                            <td></td>
-                           <td>{ item.quantity }</td>
+                           <td>[[item.quantity]]</td>
                            <td >
-                              <span v-if="item.status == 'pending'" class="badge badge-danger">{ item.status }</span>
-                              <span v-else class="badge badge-success">{ item.status }</span>
+                              <span v-if="item.status == 'pending'" class="badge badge-danger">[[item.status]]</span>
+                              <span v-else class="badge badge-success">[[item.status]]</span>
                            </td>
                         </tr>
-                        -->
                   </tbody>
                </table>
             </div>

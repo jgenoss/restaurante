@@ -136,12 +136,5 @@
    <script src="{{url_for('static',filename='plugins/vue/vue.js')}}"></script>
    <script src="{{url_for('static',filename='plugins/axios/axios.min.js')}}"></script>
    <script src="{{url_for('static',filename='plugins/socket.io.js')}}"></script>
-   <script>
-      // Bloquear clics del usuario
-      var socketio = io();
-      socketio.on('connect',function(){
-         socketio.emit('message','conectado');
-      })
-   </script>
    {% block js %}{% endblock js %}
 </html>
