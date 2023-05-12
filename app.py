@@ -1,6 +1,6 @@
 from flask import Flask,session,redirect,url_for,flash,render_template,request,jsonify,json
 from flask_socketio import SocketIO
-from modals import Models
+from models.tables import ClassTables
 from pprint import pprint
 
 app = Flask(__name__)
@@ -27,7 +27,7 @@ def tables():
 @app.route("/tables/get_tables", methods=['GET','POST'])
 def get_tables():
    if request.method == 'POST':
-      return Models.get_tables()
+      return ClassTables.getTables()
    else:
       return redirect(url_for('tables'))
 
@@ -35,7 +35,7 @@ def get_tables():
 def getOrdersTableData():
    if request.method == 'POST':
       parseJson = request.json
-      return Models.getOrdersTableData(parseJson['id'])
+      return ClassTables.getOrdersTableData(parseJson['id'])
    else:
       return redirect(url_for('tables'))
    
@@ -44,7 +44,7 @@ def getOrdersTableData():
 def open_table():
    if request.method == 'POST':
       parseJson = request.json
-      response = Models.open_table_id(parseJson['table_id'],parseJson['waiter'],parseJson['comment'],parseJson['status'])
+      response = ClassTables.openTableId(parseJson['table_id'],parseJson['waiter'],parseJson['comment'],parseJson['status'])
       if response == None:
          return json.dumps({"message":"error"},default=str)
       else:

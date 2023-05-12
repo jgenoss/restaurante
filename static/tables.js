@@ -27,6 +27,7 @@ new Vue({
       var socketio = io();
       socketio.on("message", function (Response) {
         if (Response.data == "update") {
+          console.log(Response)
           java.loadTables();
         }
       });
