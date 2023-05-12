@@ -77,7 +77,3 @@ class RestaurantApp:
             port=self.app.config['PORT'],
             host=self.app.config['HOST']
         )
-
-if __name__ == '__main__':
-    app = RestaurantApp()
-    app.run()
