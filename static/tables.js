@@ -1,60 +1,61 @@
 new Vue({
-  el: "#tables",
-  delimiters: ["[[", "]]"],
-  data() {
+  el: '#tables',
+  delimiters: ['[[', ']]'],
+  data () {
     return {
       tables: [],
-      table: {
-        id: "",
-        name: "",
+      selectedTable: {
+        id: '',
+        name: '',
         orders: []
       },
       form: {
-        table_id: "",
-        waiter: "",
-        comment: "",
-        status: "",
-      },
-    };
+        tableId: '',
+        waiter: '',
+        comment: '',
+        status: ''
+      }
+    }
   },
-  created() {
-    this.Initfunction();
-    this.loadTables();
+  created () {
+    this.initializeWebSocket()
+    this.loadTablesFromServer()
   },
   methods: {
-    Initfunction: function () {
-      java = this;
-      var socketio = io();
-      socketio.on("message", function (Response) {
-        if (Response.data == "update") {
-          console.log(Response)
-          java.loadTables();
+    initializeWebSocket () {
+      const vm = this
+      const socket = io()
+      socket.on('message', (response) => {
+        if (response.data === 'update') {
+          console.log(response)
+          vm.loadTablesFromServer()
         }
-      });
+      })
     },
-    loadTables: function () {
-      axios.post("/tables/get_tables").then((Response) => {
-        this.tables = Response.data;
-      });
+    loadTablesFromServer () {
+      axios.post('/tables/get_tables').then((response) => {
+        this.tables = response.data
+      })
     },
-    get_table_id: function (table_id, status) {
-      axios.post("/tables/getOrdersTableData", { id: table_id }).then((Response) => {
-        this.table = Response.data;
-      });
-      this.form.table_id = table_id;
-      this.form.status = status;
-      //console.log(table_id, status);
+    selectTable (tableId, status) {
+      axios.post('/tables/get_orders_table_data', { id: tableId }).then((response) => {
+        this.selectedTable = response.data
+      })
+      this.form.tableId = tableId
+      this.form.status = status
     },
-    submitOpenTable: function () {
-      axios.post("tables/open_table", this.form).then((Response) => {
-        if (Response.data.message == "error") {
-        } else if (Response.data.message == "success") {
-          $('[aria-label="Close"]').click();
-          this.loadTables();
+    submitOpenTableForm () {
+      axios.post('tables/open_table', this.form).then((response) => {
+        if (response.data.message === 'error') {
+          // Manejar errores
+        } else if (response.data.message === 'success') {
+          // Cerrar el modal y recargar las mesas
+          $('[aria-label="Close"]').click()
+          this.loadTablesFromServer()
         } else {
-          console.log(Response);
+          console.log(response)
         }
-      });
-    },
-  },
-});
+      })
+    }
+  }
+})

@@ -1,83 +1,83 @@
-from flask import Flask,session,redirect,url_for,flash,render_template,request,jsonify,json
+from flask import Flask, session, redirect, url_for, flash, render_template, request, jsonify
 from flask_socketio import SocketIO
-from models.tables import ClassTables
+from models.tables import Table
 from pprint import pprint
 
-app = Flask(__name__)
-socketio = SocketIO(app)
+class RestaurantApp:
+    def __init__(self):
+        self.app = Flask(__name__)
+        self.app.config['DEBUG'] = True
+        self.app.config['HOST'] = '0.0.0.0'
+        self.app.config['PORT'] = 8000
+        self.socketio = SocketIO(self.app)
+        self.socketio.init_app(self.app)
+        
+        self.app.add_url_rule("/", view_func=self.home)
+        self.app.add_url_rule("/menu", view_func=self.menu)
+        self.app.add_url_rule("/tables", view_func=self.tables)
+        self.app.add_url_rule("/tables/get_tables", view_func=self.get_tables, methods=['POST'])
+        self.app.add_url_rule("/tables/get_orders_table_data", view_func=self.get_orders_table_data, methods=['POST'])
+        self.app.add_url_rule("/tables/open_table", view_func=self.open_table, methods=['POST'])
+        self.app.add_url_rule("/tables/close_table", view_func=self.close_table, methods=['POST'])
+        self.app.add_url_rule("/orders", view_func=self.orders)
+        
+        self.socketio.on_event('message', self.handle_message)
+        self.socketio.on_event('open_table', self.handle_open_table)
+        
+    def home(self):
+        return render_template("index.html")
+    
+    def menu(self):
+        return render_template("menu.html")
+    
+    def tables(self):
+        return render_template("tables.html")
+    
+    def get_tables(self):
+        if request.method == 'POST':
+            return Table.get_all_tables()
+    
+    def get_orders_table_data(self):
+        if request.method == 'POST':
+            parse_json = request.json
+            return Table.get_table_orders_data(parse_json['id'])
+    
+    def open_table(self):
+        if request.method == 'POST':
+            parse_json = request.json
+            response = Table.open_table(parse_json['tableId'], parse_json['waiter'], parse_json['comment'], parse_json['status'])
+            if response is None:
+                return jsonify(message="error")
+            else:
+                self.socketio.emit("message", {"data": "update"})
+                return jsonify(message="success")
+    
+    def close_table(self, table_id):
+        # Obtener la información de la mesa desde la base de datos
+        table = Table.get_table_by_id(table_id)
+        if table is None:
+            return jsonify(message="error: table not found")
+        
+        # Emitir un mensaje a través de Socket.IO para notificar a los clientes que la mesa se ha cerrado
+        self.socketio.emit("message", {"data": "update"})
+        return jsonify(message="success")
+    
+    def orders(self):
+        return render_template("orders.html")
+    
+    def handle_message(self, data):
+        print('received message: ' + str(data))
+    
+    def handle_open_table(self, data):
+        print('received message: ' + str(data))
+    
+    def run(self):
+        self.socketio.run(
+            self.app,
+            port=self.app.config['PORT'],
+            host=self.app.config['HOST']
+        )
 
-app.config['DEBUG'] = True
-app.config['HOST'] = '0.0.0.0'
-app.config['PORT'] = 8000
-
-@app.route("/")
-def index():
-   return render_template("index.html")
-
-@app.route("/menu")
-def menu():
-   return render_template("menu.html")
-
-#vista de mesas
-@app.route("/tables")
-def tables():
-   return render_template("tables.html")
-
-#consultar mesas
-@app.route("/tables/get_tables", methods=['GET','POST'])
-def get_tables():
-   if request.method == 'POST':
-      return ClassTables.getTables()
-   else:
-      return redirect(url_for('tables'))
-
-@app.route("/tables/getOrdersTableData", methods=['GET','POST'])
-def getOrdersTableData():
-   if request.method == 'POST':
-      parseJson = request.json
-      return ClassTables.getOrdersTableData(parseJson['id'])
-   else:
-      return redirect(url_for('tables'))
-   
-#abrir mesa 
-@app.route("/tables/open_table", methods=['GET','POST'])
-def open_table():
-   if request.method == 'POST':
-      parseJson = request.json
-      response = ClassTables.openTableId(parseJson['table_id'],parseJson['waiter'],parseJson['comment'],parseJson['status'])
-      if response == None:
-         return json.dumps({"message":"error"},default=str)
-      else:
-         socketio.emit("message",{"data":"update"})
-         return json.dumps({"message":"success"},default=str)
-   else:
-      return redirect(url_for('tables'))
-
-
-@app.route("/orders")
-def orders():
-   return render_template("orders.html")
-
-@socketio.on('message')
-def handle_message(data):
-   print('received message: ' + str(data))
-   
-@socketio.on("open_table")
-def handle_open_table(data):
-   print('received message: ' + str(data))
-
-#@socketio.on('connect')
-#def handle_connect():
-   #print('Cliente conectado')
-
-#@socketio.on('disconnect')
-#def handle_disconnect():
-   #print('Cliente desconectado')
-
-#run app
-if __name__ == "__main__":
-   socketio.run(
-      app,
-      port=app.config['PORT'],
-      host=app.config['HOST']
-   )
+if __name__ == '__main__':
+    app = RestaurantApp()
+    app.run()

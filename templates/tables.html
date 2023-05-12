@@ -1,13 +1,15 @@
-{% extends 'base.html' %} {% block base %}
+{% extends 'base.html' %}
+
+{% block base %}
 <div class="content-header">
    <div class="container-fluid">
       <div class="row mb-2">
          <div class="col-sm-6">
-            <h1 class="m-0">Gestion de Mesas</h1>
+            <h1 class="m-0">Gestión de Mesas</h1>
          </div>
          <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-               <li class="breadcrumb-item"><a href="">Gestion de Mesas</a></li>
+               <li class="breadcrumb-item"><a href="">Gestión de Mesas</a></li>
                <li class="breadcrumb-item active">Mesas</li>
             </ol>
          </div>
@@ -17,33 +19,33 @@
 <div id="tables">
    <div class="content">
       <div class="row">
-         <div v-for="i in tables" :key="i.table_id" class="col-lg-3 col-6">
+         <div v-for="table in tables" :key="table.table_id" class="col-lg-3 col-6">
             <!-- MESA COLOR ROJO ESTADO CERRADA -->
-            <div v-if="i.status == 'close'" class="small-box bg-danger">
+            <div v-if="table.status == 'close'" class="small-box bg-danger">
                <div class="inner">
-                  <h3>Mesa [[i.table_id]]</h3>
-                  <h5>Hora: [[i.start_time]]</h5>
-                  <p>Note: [[i.comment]]</p>
+                  <h3>Mesa [[table.table_id]]</h3>
+                  <h5>Hora: [[table.start_time]]</h5>
+                  <p>Nota: [[table.comment]]</p>
                </div>
                <div class="icon">
                   <i class="fa fa-table"></i>
                </div>
-               <a href="#" @click="get_table_id(i.table_id,i.status)" data-toggle="modal" data-target="#modal-close" class="small-box-footer">
-                  Mas informacion <i class="fa fa-circle-plus"></i>
+               <a href="#" @click="selectTable(table.table_id, table.status)" data-toggle="modal" data-target="#modal-close" class="small-box-footer">
+                  Más información <i class="fa fa-circle-plus"></i>
                </a>
             </div>
             <!-- MESA COLOR VERDE ESTADO ABIERTA -->
             <div v-else class="small-box bg-success">
                <div class="inner">
-                  <h3>Mesa [[i.table_id]]</h3>
-                  <h5>Hora: [[i.start_time]]</h5>
-                  <p>Note: [[i.comment]]</p>
+                  <h3>Mesa [[table.table_id]]</h3>
+                  <h5>Hora: [[table.start_time]]</h5>
+                  <p>Nota: [[table.comment]]</p>
                </div>
                <div class="icon">
                   <i class="fa fa-table"></i>
                </div>
-               <a href="#" @click="get_table_id(i.table_id,i.status)" data-toggle="modal" data-target="#modal-open" class="small-box-footer">
-                  Mas informacion <i class="fa fa-circle-plus"></i>
+               <a href="#" @click="selectTable(table.table_id, table.status)" data-toggle="modal" data-target="#modal-open" class="small-box-footer">
+                  Más información <i class="fa fa-circle-plus"></i>
                </a>
             </div>
          </div>
@@ -58,13 +60,13 @@
                <span aria-hidden="true">&times;</span>
                </button>
             </div>
-            <form v-on:submit.prevent="submitOpenTable">
+            <form v-on:submit.prevent="submitOpenTableForm">
                <div class="modal-body">
                   <section class="col-lg-12">
                      <div class="row">
                         <div class="col-md-6">
                            <div class="form-group">
-                              <label for="">Meser(@)</label>
+                              <label for="">Meser@</label>
                               <input v-model="form.waiter" class="form-control" type="text" required/>
                            </div>
                         </div>
@@ -78,7 +80,7 @@
                   </section>
                </div>
                <div class="modal-footer justify-content-between">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                   <button type="submit" class="btn btn-success">Abrir mesa</button>
                </div>
             </form>
@@ -90,7 +92,7 @@
       <div class="modal-dialog">
          <div class="modal-content">
             <div class="modal-header bg-success">
-               <h4 class="modal-title">Pedidos [[table.name]]</h4>
+               <h4 class="modal-title">Pedidos [[selectedTable.name]]</h4>
                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                <span aria-hidden="true">&times;</span>
                </button>
@@ -108,37 +110,39 @@
                   <thead>
                      <tr class="text-center">
                         <th>#</th>
-                        <th>name</th>
-                        <th>description</th>
-                        <th>note</th>
-                        <th>quantity</th>
-                        <th>status</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Nota</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
                      </tr>
                   </thead>
                   <tbody class="text-center">
-                        <tr v-for="item in table.orders" :key="item.id">
-                           <td>[[item.id]]</td>
-                           <td>[[item.name]]</td>
-                           <td>[[item.description]]</td>
+                        <tr v-for="order in selectedTable.orders" :key="order.id">
+                           <td>[[order.id]]</td>
+                           <td>[[order.name]]</td>
+                           <td>[[order.description]]</td>
                            <td></td>
-                           <td>[[item.quantity]]</td>
+                           <td>[[order.quantity]]</td>
                            <td >
-                              <span v-if="item.status == 'pending'" class="badge badge-danger">[[item.status]]</span>
-                              <span v-else class="badge badge-success">[[item.status]]</span>
+                              <span v-if="order.status == 'pending'" class="badge badge-danger">[[order.status]]</span>
+                              <span v-else class="badge badge-success">[[order.status]]</span>
                            </td>
                         </tr>
                   </tbody>
                </table>
             </div>
             <div class="modal-footer justify-content-between">
-               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-               <button type="button" class="btn btn-primary">Save changes</button>
+               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+               <button type="button" class="btn btn-primary">Guardar cambios</button>
             </div>
          </div>
       </div>
    </div>
    <!-- MODULO MESA CERRADA -->
 </div>
-{% endblock base %} {% block js %}
+{% endblock base %}
+
+{% block js %}
 <script src="{{url_for('static',filename='tables.js')}}"></script>
 {% endblock js %}
