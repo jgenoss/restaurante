@@ -60,15 +60,33 @@ new Vue({
       })
     },
     closeTable (tableId) {
-      axios.post('/tables/close_table',{tableId}).then((response) => {
-        if (response.data.message === 'error') {
-          // Manejar errores
-        } else if (response.data.message === 'success') {
-          // Cerrar el modal y recargar las mesas
-          $('[aria-label="Close"]').click()
-          this.resetInputForm()
-        } else {
-          console.log(response)
+      Swal.fire({
+        title: 'Estas Segura de hacer esto',
+        text: "Esta mesa se cerrara y perderas las informacion!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si!',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios.post('/tables/close_table',{tableId}).then((response) => {
+            if (response.data.message === 'error') {
+              // Manejar errores
+            } else if (response.data.message === 'success') {
+              // Cerrar el modal y recargar las mesas
+              $('[aria-label="Close"]').click()
+              Swal.fire(
+                'Exito!',
+                'La mesa Esta cerrada.',
+                'success'
+              )
+              this.resetInputForm()
+            } else {
+              console.log(response)
+            }
+          })
         }
       })
     },
