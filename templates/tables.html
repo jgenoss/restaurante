@@ -30,21 +30,21 @@
                <div class="icon">
                   <i class="fa fa-table"></i>
                </div>
-               <a href="#" @click="selectTable(table.table_id, table.status)" data-toggle="modal" data-target="#modal-close" class="small-box-footer">
+               <a href="#" @click="selectTable(table.tableId, table.status)" data-toggle="modal" data-target="#modal-close" class="small-box-footer">
                   Más información <i class="fa fa-circle-plus"></i>
                </a>
             </div>
             <!-- MESA COLOR VERDE ESTADO ABIERTA -->
             <div v-else class="small-box bg-success">
                <div class="inner">
-                  <h3>Mesa [[table.table_id]]</h3>
+                  <h3>Mesa [[table.tableId]]</h3>
                   <h5>Hora: [[table.start_time]]</h5>
                   <p>Nota: [[table.comment]]</p>
                </div>
                <div class="icon">
                   <i class="fa fa-table"></i>
                </div>
-               <a href="#" @click="selectTable(table.table_id, table.status)" data-toggle="modal" data-target="#modal-open" class="small-box-footer">
+               <a href="#" @click="selectTable(table.tableId, table.status)" data-toggle="modal" data-target="#modal-open" class="small-box-footer">
                   Más información <i class="fa fa-circle-plus"></i>
                </a>
             </div>
@@ -60,14 +60,14 @@
                <span aria-hidden="true">&times;</span>
                </button>
             </div>
-            <form v-on:submit.prevent="submitOpenTableForm">
+            <form v-on:submit.prevent="submitOpenTableForm" autocomplete="on">
                <div class="modal-body">
                   <section class="col-lg-12">
                      <div class="row">
                         <div class="col-md-6">
                            <div class="form-group">
                               <label for="">Meser@</label>
-                              <input v-model="form.waiter" class="form-control" type="text" required/>
+                              <input v-model="form.waiter" class="form-control" type="text"  required/>
                            </div>
                         </div>
                         <div class="col-md-12">
@@ -99,13 +99,39 @@
             </div>
             <div class="modal-body">
                <div class="mb-1">
-                  <button id="btnNewOrder" class="float-left btn btn-info">
-                     Nuevo pedido <i class="nav-icon fas fa-plus"></i>
-                  </button>
                   <button style="display: none" id="btnReturn" class="float-right btn btn-info">
                      Volver <i class="nav-icon fas fa-undo"></i>
                   </button>
                </div>
+               <div class="col-md-12">
+                  <div class="form-group">
+                     <label>Search</label>
+                     <input v-model="keyupInput" class="form-control" type="search" @keyup="keyupSearch">
+                  </div>
+               </div>
+               <table id="table_menus" class="table table-responsive p-1 table-bordered table-hover">
+                  <thead>
+                     <tr class="text-center">
+                        <th></th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Cant</th>
+                        <th>Precio</th>
+                     </tr>
+                  </thead>
+                  <tbody class="text-center">
+                        <tr v-for="menu in menus" :key="menu.id">
+                           <td>
+                              <button @click="addOrder(selectedTable.tableId,menu.id,menu.cant)" class="btn btn-primary">
+                                 <i class="fas fa-plus"></i>
+                              </button></td>
+                           <td>[[menu.name]]</td>
+                           <td>[[menu.description]]</td>
+                           <td><input v-model="menu.cant" style="width: 60px;" type="number"></td>
+                           <td>[[menu.price]]</td>
+                        </tr>
+                  </tbody>
+               </table>
                <table id="table_orders" class="table table-responsive p-1 table-bordered table-hover">
                   <thead>
                      <tr class="text-center">
@@ -134,7 +160,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-               <button type="button" class="btn btn-primary">Guardar cambios</button>
+               <button @click="closeTable(selectedTable.tableId)" type="button" class="btn btn-warning">Cerrar mesa</button>
             </div>
          </div>
       </div>

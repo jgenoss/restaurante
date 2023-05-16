@@ -13,7 +13,7 @@ class Table:
     def get_table_by_id(cls, id):
         db = Database()
         return db.fetch_one("SELECT * FROM tables WHERE id=%s", (id,))
-
+    
     @classmethod
     def get_date(cls):
         return datetime.datetime.now().strftime("%Y-%m-%d")
@@ -25,7 +25,7 @@ class Table:
     @classmethod
     def get_table_orders(cls, id):
         db = Database()
-        return db.fetch_all("SELECT o.id, m.name, m.description, o.quantity, m.price, o.status FROM orders AS o INNER JOIN tables AS t ON o.table_id = t.id INNER JOIN menu AS m ON o.menu_id = m.id WHERE t.id = %s ", (id,))
+        return db.fetch_all("SELECT o.id, m.name, m.description, o.quantity, m.price, o.status FROM orders AS o INNER JOIN menu AS m ON o.menu_id = m.id INNER JOIN tables AS t ON o.table_id = t.id INNER JOIN reservations AS r ON o.reservation_id = r.reservation_id AND t.id = r.table_id AND t.status = r.status WHERE t.id = %s ", (id,))
 
     @classmethod
     def open_table(cls, table_id, waiter, comment, status):
@@ -52,10 +52,12 @@ class Table:
                 return err
 
     @classmethod
-    def close_table(cls, table_id, total):
+    def close_table(cls,table_id):
         db = Database()
         try:
-            db.execute("UPDATE tables SET status='closed', total=%s WHERE id=%s", (total, table_id,))
+            db.execute("UPDATE tables SET status='close' WHERE id=%s",(table_id,))
+            db.execute("UPDATE reservations SET status='close',end_time=%s WHERE table_id=%s AND status = 'open'",(cls.get_time(),table_id,))
+            #return r1,r2
             if db.cursor.rowcount == 0:
                 print(f"[close_table] => None, time:{cls.get_time()}")
                 return None
@@ -89,22 +91,24 @@ class Table:
             open_table = cls.get_open_table(i[0])
             if i[2] == "open" and open_table is not None:
                 data.append({
-                    "table_id": i[0],
+                    "tableId": i[0],
                     "name": i[1],
                     "reservation_id": open_table['reservation_id'],
                     "comment": open_table['comment'],
                     "reservation_date": open_table['reservation_date'],
                     "start_time": open_table['start_time'],
+                    "end_time": "",
                     "status": i[2]
                 })
             else:
                 data.append({
-                    "table_id": i[0],
+                    "tableId": i[0],
                     "name": i[1],
                     "reservation_id": "0",
                     "comment": "N/A",
                     "reservation_date": "N/A",
                     "start_time": "N/A",
+                    "end_time": "N/A",
                     "status": i[2]
                 })
         return json.dumps(data,default=str)
@@ -113,9 +117,9 @@ class Table:
     def get_table_orders_data(cls, table_id):
         result = cls.get_table_by_id(table_id)
         data = {
-            "id": result[0],
+            "tableId": result[0],
             "name": result[1],
-            "total": result[3],
+            #"total": result[3],
             "orders": []
         }
         for i in cls.get_table_orders(table_id):
@@ -128,3 +132,24 @@ class Table:
                 "status": i[5]
             }]
         return json.dumps(data,default=str)
+    
+    @classmethod
+    def search_menu(cls,search):
+        db = Database()
+        results = db.fetch_all(f"SELECT id, name, description, price FROM menu WHERE name LIKE '%{search}%' LIMIT 3")
+        data = list()
+        for i in results:
+            data.append({
+                "id":i[0],
+                "name":i[1],
+                "description":i[2],
+                "cant":0,
+                "price":i[3]
+            })
+        return data
+    
+    @classmethod
+    def new_table_order(cls,tableId,menuId,cant):
+        db = Database()
+        result = db.fetch_one("SELECT t.id, r.reservation_id FROM tables AS t INNER JOIN reservations AS r ON t.id = r.table_id WHERE t.id = %s AND t.status = r.status",(tableId,))
+        db.execute("INSERT INTO (table_id, reservation_id, menu_id, quantity,status)VALUES(%s,%s,%s,%s,%s)",(result[0],result[1],menuId,cant,'pending'))
