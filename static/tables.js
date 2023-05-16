@@ -91,7 +91,15 @@ new Vue({
       }
     },
     addOrder (tableId,menuId,cant) {
-      console.log(tableId,menuId,cant)
+     if(cant === 0){
+        Swal.fire({
+          icon: 'info',
+          title: 'Hey Cuidado',
+          text: 'El valor debe ser mayor a 0!',
+          showConfirmButton: false,
+          timer: 5000
+        })
+     }
     },
     resetInputForm () {
       this.form.tableId='',
