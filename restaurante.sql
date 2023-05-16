@@ -11,7 +11,7 @@
  Target Server Version : 100427
  File Encoding         : 65001
 
- Date: 11/05/2023 16:16:38
+ Date: 16/05/2023 17:58:21
 */
 
 SET NAMES utf8mb4;
@@ -44,25 +44,24 @@ DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `table_id` int NOT NULL,
+  `reservation_id` int NOT NULL,
   `menu_id` int NOT NULL,
   `quantity` int NOT NULL,
   `status` enum('pending','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'pending',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `table_id`(`table_id`) USING BTREE,
   INDEX `menu_id`(`menu_id`) USING BTREE,
+  INDEX `reservation_id`(`reservation_id`) USING BTREE,
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+  CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `orders_ibfk_3` FOREIGN KEY (`reservation_id`) REFERENCES `reservations` (`reservation_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES (13, 1, 1, 2, 'pending');
-INSERT INTO `orders` VALUES (14, 1, 2, 1, 'pending');
-INSERT INTO `orders` VALUES (15, 2, 3, 3, 'completed');
-INSERT INTO `orders` VALUES (16, 3, 2, 2, 'completed');
-INSERT INTO `orders` VALUES (17, 4, 1, 1, 'pending');
-INSERT INTO `orders` VALUES (18, 4, 4, 4, 'pending');
+INSERT INTO `orders` VALUES (1, 1, 1, 1, 10, 'pending');
+INSERT INTO `orders` VALUES (2, 2, 2, 2, 2, 'pending');
 
 -- ----------------------------
 -- Table structure for reservations
@@ -82,12 +81,14 @@ CREATE TABLE `reservations`  (
   INDEX `table_id`(`table_id`) USING BTREE,
   CONSTRAINT `reservations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `reservations_ibfk_2` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of reservations
 -- ----------------------------
-INSERT INTO `reservations` VALUES (1, NULL, 1, 'test', '2023-05-11', '15:32:58', NULL, 'open');
+INSERT INTO `reservations` VALUES (1, NULL, 1, 'test', '2023-05-16', '15:15:40', '15:17:53', 'close');
+INSERT INTO `reservations` VALUES (2, NULL, 2, 'test', '2023-05-16', '15:16:21', NULL, 'open');
+INSERT INTO `reservations` VALUES (3, NULL, 1, 'test', '2023-05-16', '15:18:00', NULL, 'open');
 
 -- ----------------------------
 -- Table structure for tables
@@ -104,7 +105,7 @@ CREATE TABLE `tables`  (
 -- Records of tables
 -- ----------------------------
 INSERT INTO `tables` VALUES (1, 'Mesa 1', 'open');
-INSERT INTO `tables` VALUES (2, 'Mesa 2', 'close');
+INSERT INTO `tables` VALUES (2, 'Mesa 2', 'open');
 INSERT INTO `tables` VALUES (3, 'Mesa 3', 'close');
 INSERT INTO `tables` VALUES (4, 'Mesa 4', 'close');
 
