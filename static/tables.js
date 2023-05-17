@@ -110,7 +110,7 @@ new Vue({
       }
     },
     addOrder (tableId,menuId,cant) {
-     if(cant === 0){
+     if(cant <= 0 ){
         Swal.fire({
           icon: 'info',
           title: 'Hey Cuidado',
