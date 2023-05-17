@@ -20,6 +20,7 @@ class RestaurantApp:
         self.app.add_url_rule("/tables/open_table", view_func=self.open_table, methods=['POST'])
         self.app.add_url_rule("/tables/close_table", view_func=self.close_table, methods=['POST'])
         self.app.add_url_rule("/tables/search_menu", view_func=self.search_menu, methods=['POST'])
+        self.app.add_url_rule("/tables/new_table_order", view_func=self.new_table_order, methods=['POST'])
         self.app.add_url_rule("/orders", view_func=self.orders)
         
         self.socketio.on_event('message', self.handle_message)
@@ -40,38 +41,48 @@ class RestaurantApp:
     
     def get_orders_table_data(self):
         if request.method == 'POST':
-            parse_json = request.json
-            return Table.get_table_orders_data(parse_json['tableId'])
+            _json = request.json
+            return Table.get_table_orders_data(_json['tableId'])
     
     def open_table(self):
         if request.method == 'POST':
-            parse_json = request.json
-            response = Table.open_table(parse_json['tableId'], parse_json['waiter'], parse_json['comment'], parse_json['status'])
+            _json = request.json
+            response = Table.open_table(_json['tableId'], _json['waiter'], _json['comment'], _json['status'])
             if response is None:
                 return jsonify(message="error")
             else:
-                self.socketio.emit("message", {"data": "update"})
+                self.socketio.emit("message", {"get_tables": "update"})
                 return jsonify(message="success")
     
     def close_table(self):
         if request.method == 'POST':
-            parse_json = request.json
-            response = Table.close_table(parse_json['tableId'])
+            _json = request.json
+            response = Table.close_table(_json['tableId'])
             # Emitir un mensaje a través de Socket.IO para notificar a los clientes que la mesa se ha cerrado
             if response is None:
                 return jsonify({'message':'error','data':response})
             else:
-                self.socketio.emit("message", {"data": "update"})
+                self.socketio.emit("message", {"get_tables": "update"})
                 return jsonify(message="success")
     
     def search_menu(self):
         if request.method == 'POST':
-            parse_json = request.json
-            response = Table.search_menu(parse_json['search'])
+            _json = request.json
+            response = Table.search_menu(_json['search'])
             if response is None:
                 return jsonify({'message':'error','data':response})
             else:
                 return jsonify({'message':"success",'list':response})
+            
+    def new_table_order(self):
+        if request.method == 'POST':
+            _json = request.json
+            response = Table.new_table_order(_json['tableId'],_json['menuId'],_json['cant'])
+            if response is None:
+                return jsonify({'message':'error','data':response})
+            else:
+                self.socketio.emit("message", {"get_table_orders_data": "update"})
+                return jsonify({'message':"success"})
     
     def orders(self):
         return render_template("orders.html")

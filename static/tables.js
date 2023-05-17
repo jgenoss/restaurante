@@ -28,9 +28,10 @@ new Vue({
       const vm = this
       const socket = io()
       socket.on('message', (response) => {
-        if (response.data == 'update') {
-          console.log(response)
+        if (response.get_tables == 'update') {
           vm.loadTablesFromServer()
+        }else if(response.get_table_orders_data == 'update'){
+          vm.selectTable(this.form.tableId, this.form.status)
         }
       })
     },
@@ -79,7 +80,7 @@ new Vue({
               $('[aria-label="Close"]').click()
               Swal.fire(
                 'Exito!',
-                'La mesa Esta cerrada.',
+                'La mesa esta cerrada.',
                 'success'
               )
               this.resetInputForm()
@@ -117,6 +118,29 @@ new Vue({
           showConfirmButton: false,
           timer: 5000
         })
+     }else{
+      axios.post('/tables/new_table_order',{'tableId':tableId,'menuId':menuId,'cant':cant}).then((response) => {
+        if (response.data.message === 'success') {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+          Toast.fire({
+            icon: 'success',
+            title: 'Nuevo pedido'
+          })
+          console.log(response)
+        } else {
+          console.log(response)
+        }
+      })
      }
     },
     resetInputForm () {

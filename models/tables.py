@@ -143,7 +143,7 @@ class Table:
                 "id":i[0],
                 "name":i[1],
                 "description":i[2],
-                "cant":0,
+                "cant":int(0),
                 "price":i[3]
             })
         return data
@@ -151,5 +151,12 @@ class Table:
     @classmethod
     def new_table_order(cls,tableId,menuId,cant):
         db = Database()
-        result = db.fetch_one("SELECT t.id, r.reservation_id FROM tables AS t INNER JOIN reservations AS r ON t.id = r.table_id WHERE t.id = %s AND t.status = r.status",(tableId,))
-        db.execute("INSERT INTO (table_id, reservation_id, menu_id, quantity,status)VALUES(%s,%s,%s,%s,%s)",(result[0],result[1],menuId,cant,'pending'))
+        try:
+            result = db.fetch_one("SELECT t.id, r.reservation_id FROM tables AS t INNER JOIN reservations AS r ON t.id = r.table_id WHERE t.id = %s AND t.status = r.status",(tableId,))
+            db.execute("INSERT INTO orders(table_id, reservation_id, menu_id, quantity,status)VALUES(%s,%s,%s,%s,%s)",(result[0],result[1],menuId,cant,"pending",))
+            if db.cursor.rowcount != 0:
+                print(f"[new_table_order] => success, time:{cls.get_time()}")
+                return "success"                
+        except Exception as err:
+            print(err)
+            return err
