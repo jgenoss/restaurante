@@ -91,71 +91,71 @@
    <div class="modal fade" id="modal-open">
       <div class="modal-dialog modal-lg">
          <div class="modal-content">
-            <div class="modal-header bg-success">
-               <h4 class="modal-title">Pedidos [[selectedTable.name]]</h4>
-               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-               <span aria-hidden="true">&times;</span>
-               </button>
-            </div>
-            <div class="modal-body">
-               <div class="col-md-12">
-                  <div class="form-group">
-                     <label>Search</label>
-                     <input v-model="keyupInput" class="form-control" type="search" @keyup="keyupSearch">
-                  </div>
+            <div class="">
+               <div class="card-header bg-success">
+                  <h4 class="card-title">Pedidos [[selectedTable.name]]</h4>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
                </div>
-               <table id="table_menus" class="table table-responsive p-1 table-bordered table-hover">
-                  <thead>
-                     <tr class="text-center">
-                        <th></th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Cant</th>
-                        <th>Precio</th>
-                     </tr>
-                  </thead>
-                  <tbody class="text-center">
-                        <tr v-for="menu in menus" :key="menu.id">
-                           <td>
-                              <button @click="addOrder(selectedTable.tableId,menu.id,menu.cant)" class="btn btn-primary">
-                                 <i class="fas fa-plus"></i>
-                              </button></td>
-                           <td>[[menu.name]]</td>
-                           <td>[[menu.description]]</td>
-                           <td><input v-model="menu.cant" style="width: 60px;" type="number"></td>
-                           <td>[[menu.price]]</td>
+               <div class="card-body">
+                  <div class="col-md-12">
+                     <div class="form-group">
+                        <label>Search</label>
+                        <input v-model="keyupInput" class="form-control" type="search" @keyup="keyupSearch">
+                     </div>
+                  </div>
+                  <table id="table_menus" class="col-md-12 mb-2 table table-responsive-md table-bordered table-hover">
+                     <thead>
+                        <tr class="text-center">
+                           <th>Nombre</th>
+                           <th>Cant</th>
+                           <th>Precio</th>
                         </tr>
-                  </tbody>
-               </table>
-               <table id="table_orders" class="table table-responsive p-1 table-bordered table-hover">
-                  <thead>
-                     <tr class="text-center">
-                        <th>#</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Nota</th>
-                        <th>Cantidad</th>
-                        <th>Estado</th>
-                     </tr>
-                  </thead>
-                  <tbody class="text-center">
-                        <tr v-for="order in selectedTable.orders" :key="order.id">
-                           <td>[[order.id]]</td>
-                           <td>[[order.name]]</td>
-                           <td>[[order.description]]</td>
-                           <td></td>
-                           <td>[[order.quantity]]</td>
-                           <td >
-                              <span v-if="order.status == 'pending'" class="badge badge-danger">[[order.status]]</span>
-                              <span v-else class="badge badge-success">[[order.status]]</span>
-                           </td>
+                     </thead>
+                     <tbody class="text-center">
+                           <tr v-for="menu in menus" :key="menu.id">
+                              <td>
+                                 <button @click="addOrder(selectedTable.tableId,menu.id,menu.cant)" class="btn btn-sm btn-primary">
+                                    [[menu.name]]
+                                 </button></td>
+                              <td>
+                                 <input class="form-control form-control-sm" id="inptAddRes" v-model="menu.cant" type="number">
+                              </td>
+                              <td>[[menu.price]]</td>
+                           </tr>
+                     </tbody>
+                  </table>
+                  <table id="table_orders" class="col-md-12 table table-responsive-md table-bordered table-hover">
+                     <thead>
+                        <tr class="text-center">
+                           <th>#</th>
+                           <th>Nombre</th>
+                           <th>Descripción</th>
+                           <th>Nota</th>
+                           <th>Cantidad</th>
+                           <th>Estado</th>
                         </tr>
-                  </tbody>
-               </table>
-            </div>
-            <div class="modal-footer justify-content-between">
-               <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-               <button @click="closeTable(selectedTable.tableId)" type="button" class="btn btn-warning">Cerrar mesa</button>
+                     </thead>
+                     <tbody class="text-center">
+                           <tr v-for="order in selectedTable.orders" :key="order.id">
+                              <td>[[order.id]]</td>
+                              <td>[[order.name]]</td>
+                              <td>[[order.description]]</td>
+                              <td></td>
+                              <td>[[order.quantity]]</td>
+                              <td >
+                                 <span v-if="order.status == 'pending'" class="badge badge-danger">[[order.status]]</span>
+                                 <span v-else class="badge badge-success">[[order.status]]</span>
+                              </td>
+                           </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <div class="card-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                  <button @click="closeTable(selectedTable.tableId)" type="button" class="btn btn-warning">Cerrar mesa</button>
+               </div>
             </div>
          </div>
       </div>
@@ -165,5 +165,13 @@
 {% endblock base %}
 
 {% block js %}
+<script>
+   $(document).on('click','#res',function(){
+      alert();
+   });
+   $(document).on('click','#plus',function(){
+      alert('++');
+   });
+</script>
 <script src="{{url_for('static',filename='tables.js')}}"></script>
 {% endblock js %}

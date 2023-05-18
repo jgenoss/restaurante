@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container text-center my-5">
+      <img
+        src="{{url_for('static', filename='img/404.svg')}}"
+        stylesheet="width: 200px;"
+        class="img-fluid"
+        alt="404"
+      />
+      <h1 class="display-3">Oops!</h1>
+      <p class="lead">La pagina que busca no existe.</p>
+      <hr />
+      <p>Es posible que ocurra uno de estos casos:</p>
+      <ul>
+        <li>Error de tipeo en la URL.</li>
+        <li>Enlace roto.</li>
+        <li>La pagina fue eliminada.</li>
+      </ul>
+      <a href="/" class="btn btn-primary btn-lg mt-3">Ir al Inicio</a>
+    </div>
+  </body>
+</html>

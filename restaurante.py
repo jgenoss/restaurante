@@ -26,6 +26,12 @@ class RestaurantApp:
         self.socketio.on_event('message', self.handle_message)
         self.socketio.on_event('open_table', self.handle_open_table)
         
+    def page_not_found(self,e): 
+        return render_template('404.html'), 404
+        
+    def register_errorhandlers(self):  
+        self.app.errorhandler(404)(self.page_not_found)
+        
     def home(self):
         return render_template("index.html")
     
@@ -51,7 +57,7 @@ class RestaurantApp:
             if response is None:
                 return jsonify(message="error")
             else:
-                self.socketio.emit("message", {"get_tables": "update"})
+                self.socketio.emit('message', {'get_tables': 'update'})
                 return jsonify(message="success")
     
     def close_table(self):
@@ -62,7 +68,7 @@ class RestaurantApp:
             if response is None:
                 return jsonify({'message':'error','data':response})
             else:
-                self.socketio.emit("message", {"get_tables": "update"})
+                self.socketio.emit('message', {'get_tables': 'update'})
                 return jsonify(message="success")
     
     def search_menu(self):
@@ -81,7 +87,7 @@ class RestaurantApp:
             if response is None:
                 return jsonify({'message':'error','data':response})
             else:
-                self.socketio.emit("message", {"get_table_orders_data": "update"})
+                self.socketio.emit('message', {'get_table_orders_data': 'update'})
                 return jsonify({'message':"success"})
     
     def orders(self):
@@ -102,4 +108,5 @@ class RestaurantApp:
         
 if __name__ == '__main__':
     app = RestaurantApp()
+    app.register_errorhandlers()
     app.run()
